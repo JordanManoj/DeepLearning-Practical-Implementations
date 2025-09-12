@@ -1,9 +1,3 @@
-"""
-ffn_mnist.py
-Feedforward neural network (MNIST)
-Run: python ffn_mnist.py
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -15,24 +9,23 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 import os
 
-# Reproducibility
 tf.random.set_seed(42)
 np.random.seed(42)
 
-# 1. Load & preprocess
+# preprocess
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 x_train = x_train.astype("float32") / 255.0
 x_test = x_test.astype("float32") / 255.0
 
-# Flatten for feedforward net
+# flatten for feedforward net
 x_train_flat = x_train.reshape(-1, 28 * 28)
 x_test_flat = x_test.reshape(-1, 28 * 28)
 
-# One-hot labels
+# one-hot labels
 y_train_cat = to_categorical(y_train, 10)
 y_test_cat = to_categorical(y_test, 10)
 
-# 2. Build model
+
 model = Sequential([
     InputLayer(input_shape=(28*28,)),
     Dense(256, activation='relu'),
@@ -46,7 +39,6 @@ model.compile(optimizer=Adam(learning_rate=1e-3),
 
 model.summary()
 
-# Callbacks
 os.makedirs("models", exist_ok=True)
 checkpoint_cb = ModelCheckpoint(
     filepath="models/ffn_mnist_best.keras",   # ✅ new format
@@ -59,7 +51,7 @@ earlystop_cb = EarlyStopping(
     restore_best_weights=True
 )
 
-# 3. Train
+#train
 history = model.fit(
     x_train_flat, y_train_cat,
     epochs=30,
@@ -69,11 +61,11 @@ history = model.fit(
     verbose=2
 )
 
-# 4. Evaluate
+# evaluate
 test_loss, test_acc = model.evaluate(x_test_flat, y_test_cat, verbose=0)
 print(f"Test loss: {test_loss:.4f} | Test accuracy: {test_acc:.4f}")
 
-# 5. Plot training history
+# plotting
 plt.figure(figsize=(12, 5))
 
 plt.subplot(1, 2, 1)
@@ -93,3 +85,4 @@ plt.legend()
 plt.tight_layout()
 plt.savefig("ffn_mnist_history.png")
 print("Saved training plot to ffn_mnist_history.png")
+
