@@ -1,8 +1,4 @@
-"""
-rnn_imdb.py
-LSTM model for IMDB sentiment classification.
-Run: python rnn_imdb.py
-"""
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,11 +10,10 @@ from tensorflow.keras.layers import Embedding, LSTM, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
-# Reproducibility
 tf.random.set_seed(42)
 np.random.seed(42)
 
-# 1. Load & preprocess
+# preprocess
 vocab_size = 10000
 maxlen = 200
 
@@ -26,7 +21,6 @@ maxlen = 200
 x_train = pad_sequences(x_train, maxlen=maxlen, padding='post', truncating='post')
 x_test = pad_sequences(x_test, maxlen=maxlen, padding='post', truncating='post')
 
-# 2. Build model
 model = Sequential([
     Embedding(input_dim=vocab_size, output_dim=128, input_length=maxlen),
     LSTM(128, return_sequences=False),
@@ -40,10 +34,9 @@ model.compile(optimizer=Adam(learning_rate=1e-3),
 
 model.summary()
 
-# Callbacks
 os.makedirs("models", exist_ok=True)
 checkpoint_cb = ModelCheckpoint(
-    filepath="models/lstm_imdb_best.keras",   # ✅ fixed (.keras format)
+    filepath="models/lstm_imdb_best.keras",   
     save_best_only=True,
     monitor='val_accuracy'
 )
@@ -53,7 +46,7 @@ earlystop_cb = EarlyStopping(
     restore_best_weights=True
 )
 
-# 3. Train
+# train
 history = model.fit(
     x_train, y_train,
     epochs=10,
@@ -63,11 +56,11 @@ history = model.fit(
     verbose=2
 )
 
-# 4. Evaluate
+# evaluate
 test_loss, test_acc = model.evaluate(x_test, y_test, verbose=0)
 print(f"Test loss: {test_loss:.4f} | Test accuracy: {test_acc:.4f}")
 
-# 5. Plot training history
+# training history
 plt.figure(figsize=(12,5))
 plt.subplot(1,2,1)
 plt.plot(history.history['loss'], label='train_loss')
@@ -86,7 +79,7 @@ plt.tight_layout()
 plt.savefig("lstm_imdb_history.png")
 print("Saved training plot to lstm_imdb_history.png")
 
-# Optional: quick inference example using built-in word index
+
 word_index = imdb.get_word_index()
 index_word = {v+3:k for k,v in word_index.items()}
 index_word[0] = "<pad>"
@@ -102,3 +95,4 @@ print(decode_review(x_test[sample_idx]))
 print("True label:", y_test[sample_idx])
 pred = model.predict(x_test[sample_idx:sample_idx+1])[0][0]
 print("Predicted probability of positive:", float(pred))
+
