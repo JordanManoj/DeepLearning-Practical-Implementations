@@ -1,8 +1,3 @@
-"""
-cnn_cifar10.py
-Convolutional neural network (CIFAR-10) with feature map visualization.
-Run: python cnn_cifar10.py
-"""
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,18 +9,17 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
-# Reproducibility
 tf.random.set_seed(42)
 np.random.seed(42)
 
-# 1. Load & preprocess
+# preprocess
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 x_train = x_train.astype("float32") / 255.0
 x_test = x_test.astype("float32") / 255.0
 y_train_cat = to_categorical(y_train, 10)
 y_test_cat = to_categorical(y_test, 10)
 
-# 2. Build CNN
+# CNN
 input_shape = x_train.shape[1:]  # (32,32,3)
 model = Sequential([
     Input(shape=input_shape),
@@ -51,7 +45,6 @@ model.compile(optimizer=Adam(learning_rate=1e-3),
 
 model.summary()
 
-# Callbacks
 os.makedirs("models", exist_ok=True)
 checkpoint_cb = ModelCheckpoint(
     filepath="models/cnn_cifar10_best.keras",  # ✅ fixed (use .keras)
@@ -64,7 +57,7 @@ earlystop_cb = EarlyStopping(
     restore_best_weights=True
 )
 
-# 3. Train
+# training
 history = model.fit(
     x_train, y_train_cat,
     epochs=50,
@@ -74,7 +67,7 @@ history = model.fit(
     verbose=2
 )
 
-# 4. Evaluate
+#evaluate
 test_loss, test_acc = model.evaluate(x_test, y_test_cat, verbose=0)
 print(f"Test loss: {test_loss:.4f} | Test accuracy: {test_acc:.4f}")
 
@@ -97,24 +90,20 @@ plt.tight_layout()
 plt.savefig("cnn_cifar10_history.png")
 print("Saved training plot to cnn_cifar10_history.png")
 
-# 6. Visualize feature maps from a convolutional layer
-# Select an example image from test set
 idx = 5
-img = x_test[idx:idx+1]  # shape (1,32,32,3)
+img = x_test[idx:idx+1] 
 
-# Make a model that outputs intermediate conv layer outputs
 layer_names = ['conv1', 'conv2', 'conv3', 'conv4']
 layer_outputs = [model.get_layer(name).output for name in layer_names]
 activation_model = Model(inputs=model.input, outputs=layer_outputs)
 
 activations = activation_model.predict(img)
 
-# Plot the first layer's feature maps (conv1)
-first_layer_activation = activations[0]  # shape (1, H, W, channels)
+first_layer_activation = activations[0]  
 n_features = first_layer_activation.shape[-1]
 size = first_layer_activation.shape[1]
 
-# we'll display the first 16 feature maps
+# isplay the first 16 feature maps
 n_cols = 4
 n_rows = min(4, (n_features + n_cols - 1)//n_cols)
 plt.figure(figsize=(n_cols*2, n_rows*2))
@@ -127,3 +116,4 @@ plt.suptitle('Feature maps from layer conv1 (first 16 channels)')
 plt.tight_layout()
 plt.savefig("cnn_featuremaps_conv1.png")
 print("Saved feature map visualization to cnn_featuremaps_conv1.png")
+
