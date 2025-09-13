@@ -1,4 +1,3 @@
-
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -95,4 +94,3 @@ print(decode_review(x_test[sample_idx]))
 print("True label:", y_test[sample_idx])
 pred = model.predict(x_test[sample_idx:sample_idx+1])[0][0]
 print("Predicted probability of positive:", float(pred))
-
