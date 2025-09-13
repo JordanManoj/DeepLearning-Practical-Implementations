@@ -41,7 +41,7 @@ model.summary()
 
 os.makedirs("models", exist_ok=True)
 checkpoint_cb = ModelCheckpoint(
-    filepath="models/ffn_mnist_best.keras",   # ✅ new format
+    filepath="models/ffn_mnist_best.keras",  
     save_best_only=True,
     monitor='val_accuracy'
 )
@@ -85,4 +85,3 @@ plt.legend()
 plt.tight_layout()
 plt.savefig("ffn_mnist_history.png")
 print("Saved training plot to ffn_mnist_history.png")
-
