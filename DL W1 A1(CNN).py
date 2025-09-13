@@ -47,7 +47,7 @@ model.summary()
 
 os.makedirs("models", exist_ok=True)
 checkpoint_cb = ModelCheckpoint(
-    filepath="models/cnn_cifar10_best.keras",  # ✅ fixed (use .keras)
+    filepath="models/cnn_cifar10_best.keras",  
     save_best_only=True,
     monitor='val_accuracy'
 )
@@ -116,4 +116,3 @@ plt.suptitle('Feature maps from layer conv1 (first 16 channels)')
 plt.tight_layout()
 plt.savefig("cnn_featuremaps_conv1.png")
 print("Saved feature map visualization to cnn_featuremaps_conv1.png")
-
